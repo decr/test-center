@@ -5,6 +5,8 @@ apis=(
     "test-proxy"
 )
 
+echo "repo=$1"
+
 for apiname in "${apis[@]}" ; do
     if [ ! -d "./${apiname}" ]; then
         echo "api = ${apiname} not found"
@@ -16,9 +18,7 @@ for apiname in "${apis[@]}" ; do
     hash=`git -C ./${apiname} log --pretty=%H | head -n 1`
 
     echo "hash=${hash}"
-
-    hash='4044e512-cf23-41af-8f88-0e08c636f5e6'
-    result=`aws ecr list-images --repository-name kwata-repos-1akkahip8el1t | grep $hash | wc -l`
+    result=`aws ecr list-images --repository-name kwata-repos-1rdhkakik8i72 | grep $hash | wc -l`
 
     if [ $result -eq 1 ]; then
         echo "docker build --tag $1:${hash} ./${apiname}" 

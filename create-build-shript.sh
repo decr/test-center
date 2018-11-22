@@ -18,9 +18,9 @@ for apiname in "${apis[@]}" ; do
     hash=`git -C ./${apiname} log --pretty=%H | head -n 1`
 
     echo "hash=${hash}"
-    result=`aws ecr list-images --repository-name kwata-repos-1rdhkakik8i72 | grep $hash | wc -l`
+    result=`aws ecr list-images --repository-name $1 | grep $hash | wc -l`
 
-    if [ $result -eq 1 ]; then
+    if [ $result -eq 0 ]; then
         echo "docker build --tag $1:${hash} ./${apiname}" 
     fi
 done

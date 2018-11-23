@@ -9,6 +9,7 @@ apis=(
 )
 
 echo "#!/bin/bash" > /tmp/build.sh
+echo "#!/bin/bash" > /tmp/push.sh
 echo "{" > /tmp/build.json
 
 for apiname in "${apis[@]}" ; do

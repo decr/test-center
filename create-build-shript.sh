@@ -3,7 +3,7 @@
 # usage 
 # create-build-script.sh REPOSITORY_URL REPOSITORY_NAME
 
-apis=(
+services=(
     "test-app"
     "test-proxy"
 )
@@ -12,28 +12,30 @@ echo "#!/bin/bash" > /tmp/build.sh
 echo "#!/bin/bash" > /tmp/push.sh
 echo "{" > /tmp/build.json
 
-for apiname in "${apis[@]}" ; do
-    if [ ! -d "./${apiname}" ]; then
-        echo "api = ${apiname} not found"
+for service in "${services[@]}" ; do
+    if [ ! -d "./${service}" ]; then
+        echo "[${service}] Service directory not found"
         continue
     fi
 
-    hash=`git -C ./${apiname} log --pretty=%H | head -n 1`
+    hash=`git -C ./${service} log --pretty=%H | head -n 1`
 
-    echo "api = ${apiname}, hash = ${hash}"
+    echo "[${service}] Current tag => $2:${hash}"
     result=`aws ecr list-images --repository-name $2 | grep $hash | wc -l`
 
     if [ $result -eq 0 ]; then
-        echo "docker build --tag $1:${hash} ./${apiname}"
+        echo "docker build --tag $1:${hash} ./${service}"
         
-        echo "echo \"docker build --tag $1:${hash} ./${apiname}\"" >> /tmp/build.sh
-        echo "docker build --tag $1:${hash} ./${apiname}" >> /tmp/build.sh
+        echo "echo \"docker build --tag $1:${hash} ./${service}\"" >> /tmp/build.sh
+        echo "docker build --tag $1:${hash} ./${service}" >> /tmp/build.sh
 
         echo "echo \"docker push $1:${hash}\"" >> /tmp/push.sh
         echo "docker push $1:${hash}" >> /tmp/push.sh
+    else
+        echo "[${service}] Latest version of the image exists, build process was skipped."
     fi
 
-    # 仮(複数APIのdeployに対応が必要)二個以上のときのカンマの処理
+    # 仮(複数serviceをdeployに対応が必要)二個以上のときのカンマの処理
     # listにいれて最後に出すほうがいいかも
     echo "  \"tag\":\"${hash}\"" >> /tmp/build.json
 done

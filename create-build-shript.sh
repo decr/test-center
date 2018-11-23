@@ -34,6 +34,6 @@ for apiname in "${apis[@]}" ; do
 
     # 仮(複数APIのdeployに対応が必要)二個以上のときのカンマの処理
     # listにいれて最後に出すほうがいいかも
-    echo "  \"tag\":\"${hash}\"" > /tmp/build.json
+    echo "  \"tag\":\"${hash}\"" >> /tmp/build.json
 done
-echo "}" > /tmp/build.json
+echo "}" >> /tmp/build.json

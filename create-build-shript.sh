@@ -9,6 +9,7 @@ apis=(
 )
 
 echo "#!/bin/bash" > /tmp/build.sh
+echo "{" > /tmp/build.json
 
 for apiname in "${apis[@]}" ; do
     if [ ! -d "./${apiname}" ]; then
@@ -29,8 +30,10 @@ for apiname in "${apis[@]}" ; do
 
         echo "echo \"docker push $1:${hash}\"" >> /tmp/push.sh
         echo "docker push $1:${hash}" >> /tmp/push.sh
-
-        # 仮(複数APIのdeployに対応が必要)
-        echo "{\"tag\":\"${hash}\"}" > /tmp/build.json
     fi
+
+    # 仮(複数APIのdeployに対応が必要)二個以上のときのカンマの処理
+    # listにいれて最後に出すほうがいいかも
+    echo "  \"tag\":\"${hash}\"" > /tmp/build.json
 done
+echo "}" > /tmp/build.json

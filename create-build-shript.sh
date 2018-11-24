@@ -36,7 +36,7 @@ for service in "${services[@]}" ; do
         echo "[${service}] Latest version image exists, build process was skipped."
     fi
 
-    tags[service]="${hash}"
+    tags[$service]=$hash
 done
 
 for key in "${!tags[@]}"; do

@@ -8,9 +8,10 @@ services=(
     "test-proxy"
 )
 
+declare -A tags=()
+
 echo "#!/bin/bash" > /tmp/build.sh
 echo "#!/bin/bash" > /tmp/push.sh
-echo "{" > /tmp/build.json
 
 for service in "${services[@]}" ; do
     if [ ! -d "./${service}" ]; then
@@ -32,11 +33,17 @@ for service in "${services[@]}" ; do
         echo "echo \"docker push $1:${hash}\"" >> /tmp/push.sh
         echo "docker push $1:${hash}" >> /tmp/push.sh
     else
-        echo "[${service}] Latest version of the image exists, build process was skipped."
+        echo "[${service}] Latest version image exists, build process was skipped."
     fi
 
-    # 仮(複数serviceをdeployに対応が必要)二個以上のときのカンマの処理
-    # listにいれて最後に出すほうがいいかも
-    echo "  \"tag\":\"${hash}\"" >> /tmp/build.json
+    tags[service]="${hash}"
 done
-echo "}" >> /tmp/build.json
+
+for key in "${!tags[@]}"; do
+    printf '%s\0%s\0' "$key" "${tags[$key]}"
+done |
+jq -Rs '
+  split("\u0000")
+  | . as $a
+  | reduce range(0; length/2) as $i 
+      ({}; . + {($a[2*$i]): ($a[2*$i + 1]|fromjson? // .)})' > /tmp/build.json

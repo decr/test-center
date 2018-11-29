@@ -12,7 +12,6 @@ declare -A tags=()
 
 for service in "${services[@]}" ; do
     if [ ! -d "./${service}" ]; then
-        echo "[${service}] Service directory not found"
         continue
     fi
 

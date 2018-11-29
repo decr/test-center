@@ -19,12 +19,12 @@ for service in "${services[@]}" ; do
         continue
     fi
 
-    if [ $service -eq "test-app" ]; then
-        $repo_url = $1
-        $repo_name = $2
+    if [ ${service} = 'test-app' ]; then
+        repo_url=$1
+        repo_name=$2
     else
-        $repo_url = $3
-        $repo_name = $4
+        repo_url=$3
+        repo_name=$4
     fi
 
     hash=`git -C ./${service} log --pretty=%H | head -n 1`

@@ -1,3 +1,6 @@
 [submodule "test-app"]
 	path = test-app
 	url = git@github.com:decr/test-app.git
+[submodule "test-proxy"]
+	path = test-proxy
+	url = git@github.com:decr/test-proxy.git

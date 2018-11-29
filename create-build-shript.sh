@@ -19,19 +19,27 @@ for service in "${services[@]}" ; do
         continue
     fi
 
+    if [ $service -eq "test-app" ]; then
+        $repo_url = $1
+        $repo_name = $2
+    else
+        $repo_url = $3
+        $repo_name = $4
+    fi
+
     hash=`git -C ./${service} log --pretty=%H | head -n 1`
 
-    echo "[${service}] Current tag => $2:${hash}"
-    result=`aws ecr list-images --repository-name $2 | grep $hash | wc -l`
+    echo "[${service}] Current tag => $repo_name:${hash}"
+    result=`aws ecr list-images --repository-name $repo_name | grep $hash | wc -l`
 
     if [ $result -eq 0 ]; then
-        echo "docker build --tag $1:${hash} ./${service}"
+        echo "docker build --tag $repo_url:${hash} ./${service}"
         
-        echo "echo \"docker build --tag $1:${hash} ./${service}\"" >> /tmp/build.sh
-        echo "docker build --tag $1:${hash} ./${service}" >> /tmp/build.sh
+        echo "echo \"docker build --tag $repo_url:${hash} ./${service}\"" >> /tmp/build.sh
+        echo "docker build --tag $repo_url:${hash} ./${service}" >> /tmp/build.sh
 
         echo "echo \"docker push $1:${hash}\"" >> /tmp/push.sh
-        echo "docker push $1:${hash}" >> /tmp/push.sh
+        echo "docker push $repo_url:${hash}" >> /tmp/push.sh
     else
         echo "[${service}] Latest version image exists, build process was skipped."
     fi

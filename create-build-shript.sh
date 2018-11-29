@@ -29,7 +29,7 @@ for service in "${services[@]}" ; do
 
     hash=`git -C ./${service} log --pretty=%H | head -n 1`
 
-    echo "[${service}] Current tag => $repo_name:${hash}"
+    echo "[${service}] Current tag => ${repo_name}:${hash}"
     result=`aws ecr list-images --repository-name $repo_name | grep $hash | wc -l`
 
     if [ $result -eq 0 ]; then

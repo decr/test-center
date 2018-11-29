@@ -42,7 +42,7 @@ done
 for key in "${!tags[@]}"; do
     printf '%s\0%s\0' "$key" "${tags[$key]}"
 done |
-jq --raw-input --slurp '
+jq -Rs '
   split("\u0000")
   | . as $a
   | reduce range(0; length/2) as $i 

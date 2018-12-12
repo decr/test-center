@@ -6,6 +6,7 @@
 service=$1
 repo_url=$2
 repo_name=$3
+build_args=$4
 
 if [ ! -d "./${service}" ]; then
     return 0;
@@ -15,5 +16,5 @@ hash=`git -C ./${service} log --pretty=%H | head -n 1`
 result=`aws ecr list-images --repository-name $repo_name | grep $hash | wc -l`
 
 if [ $result -eq 0 ]; then
-    echo "docker build --tag $repo_url:${hash} ./${service}"
+    echo "docker build --tag $repo_url:${hash} ./${service} ${build_args}"
 fi

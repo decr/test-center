@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+
+  bgdeploy-proxy:
+    container_name: bgdeploy-proxy
+    build:
+      context: ./test-proxy
+    ports:
+      - 8080:8080
+    depends_on:
+      - bgdeploy-app
+    environment:
+        HOST_PORT: 8080
+        BACKEND_HOST_NAME: 127.0.0.1
+        BACKEND_HOST_PORT: 80
+
+  bgdeploy-app:
+    container_name: bgdeploy-app
+    build:
+      dockerfile: Dockerfile.debug
+      context: ./test-app
+    ports:
+      - 80:80
+    environment:
+      HOST_PORT: 80
+    volumes:
+      - ./test-app:/srv:cached
